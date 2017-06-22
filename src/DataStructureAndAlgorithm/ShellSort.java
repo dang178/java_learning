@@ -2,6 +2,16 @@ package DataStructureAndAlgorithm;
 
 /**
  * Created by BFD-295 on 2017/6/21.
+ *
+ * shell排序：
+ * 重点：
+ * 1、间距生成器：knuth's sequence、h=n/2；间距会影响时间复杂度
+ * 2、内部插入排序：比较顺序（h,0)(h+1,1)....(n,n-h)
+ * 性能：时间复杂度O(N7/6)~O(N3/2)
+ * 步骤：
+ * 1、生成间距值：gap
+ * 2、循环间距值，每次递减：h=h/3-1
+ * 3、当前间距值进行插入排序，从索引为h开始，依次与前面的间距为h的索引进行比较
  */
 public class ShellSort {
     public double[] arraySh;
@@ -23,6 +33,7 @@ public class ShellSort {
             System.out.print(arraySh[index] + "\t");
             index++;
         }
+        System.out.println("");
     }
 
     public void Sort()
@@ -30,23 +41,29 @@ public class ShellSort {
         int inner,outer;
         double temp;
         int h=1;
-        while(h<nElems){
+        //generate the gap
+        while(h<=nElems/3)
+        {
             h=3*h+1;
         }
-        //间距循环
-        while(h>0){
-            //从最大的间隔开始，从当前间隔为索引，对索引倍数进行插入排序。并逐步加一
-            for(outer=h;outer<nElems;outer++)
+        //h loop;decreasing h, until h=1
+        while(h>0)
+        {
+            // insert-sort,index started at current gap,and compare to index at index-h
+            for(outer=h; outer<nElems; outer++)
             {
                 temp = arraySh[outer];
-                for(inner=outer-h;inner<0;inner-=h)
-                {
-                    if(arraySh[inner]>temp)
-                        arraySh[outer]=arraySh[inner];
+                inner = outer;
+                // compare process:(h,h-h),(h+1,h+1-h)....(nElems,nElems-h)
+                while(inner > h-1 && arraySh[inner-h] >= temp)
+                    {
+                    arraySh[inner] = arraySh[inner-h];
+                    inner -= h;
                 }
-                arraySh[inner]=temp;
-            }
-            h=(h-1)/3;
+                arraySh[inner] = temp;
+            } // end for
+            h = (h-1) / 3; // decrease h
+            display();
         }
     }
 }
